@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.10" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.11">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="9.0.6" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Modules\IntelliDoc.Modules.Intake\IntelliDoc.Modules.Intake.csproj" />
+    <ProjectReference Include="..\Modules\IntelliDoc.Modules.Extraction\IntelliDoc.Modules.Extraction.csproj" />
+    <ProjectReference Include="..\Modules\IntelliDoc.Modules.Audit\IntelliDoc.Modules.Audit.csproj" />
+    <ProjectReference Include="..\Modules\IntelliDoc.Modules.Search\IntelliDoc.Modules.Search.csproj" />
+  </ItemGroup>
+
+</Project>
