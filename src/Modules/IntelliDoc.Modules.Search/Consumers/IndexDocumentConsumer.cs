@@ -19,35 +19,62 @@ public class IndexDocumentConsumer : IConsumer<IDataExtracted>
         var message = context.Message;
         Console.WriteLine($"[Search] İndexleme başladı: {message.DocumentId}");
 
-        // Önce index'in var olduğundan emin ol
         await _searchService.CreateIndexIfNotExistsAsync();
 
-        // JSON verisini parçala
-        using var doc = JsonDocument.Parse(message.JsonData);
-        var root = doc.RootElement;
+        // 1. TEMİZLİK: Gemini bazen ```json etiketiyle gönderiyor, onu temizleyelim.
+        // message.RawText, Gemini'den gelen ham cevaptır.
+        string cleanJson = message.RawText ?? "";
 
-        string summary = "", sender = "", date = "";
+        if (cleanJson.Contains("```"))
+        {
+            cleanJson = cleanJson.Replace("```json", "", StringComparison.OrdinalIgnoreCase)
+                                 .Replace("```", "")
+                                 .Trim();
+        }
+
+        // Değişkenleri hazırla
+        string summary = "", sender = "", date = "", docType = "";
         decimal amount = 0;
 
-        // extracted_data -> Summary / Entities içinden verileri çek
-        if (root.TryGetProperty("extracted_data", out var data))
+        try
         {
-            if (data.TryGetProperty("Summary", out var s)) summary = s.GetString() ?? "";
+            // 2. PARSE: Temizlenmiş veriyi oku
+            using var doc = JsonDocument.Parse(cleanJson);
+            var root = doc.RootElement;
 
-            if (data.TryGetProperty("Entities", out var ent))
+            // 3. MAPLEME: Alanları tek tek çek
+            // (Büyük/Küçük harf duyarlılığı olmaması için güvenli okuma yapıyoruz)
+
+            if (root.TryGetProperty("DocumentType", out var dt)) docType = dt.GetString() ?? "";
+            if (root.TryGetProperty("Summary", out var sm)) summary = sm.GetString() ?? "";
+
+            if (root.TryGetProperty("Entities", out var ent))
             {
                 if (ent.TryGetProperty("Sender", out var snd)) sender = snd.GetString() ?? "";
                 if (ent.TryGetProperty("Date", out var d)) date = d.GetString() ?? "";
-                if (ent.TryGetProperty("Amount", out var amt) && amt.ValueKind == JsonValueKind.Number)
-                    amount = amt.GetDecimal();
+
+                // Tutar sayısal mı string mi kontrol et
+                if (ent.TryGetProperty("Amount", out var amt))
+                {
+                    if (amt.ValueKind == JsonValueKind.Number)
+                        amount = amt.GetDecimal();
+                    else if (amt.ValueKind == JsonValueKind.String && decimal.TryParse(amt.GetString(), out var parsedAmt))
+                        amount = parsedAmt;
+                }
             }
         }
+        catch (JsonException)
+        {
+            Console.WriteLine("[Search] JSON Parse Hatası: Veri düzgün formatta değil.");
+            // Parse edilemese bile en azından RawText kaydedilsin diye devam ediyoruz.
+        }
 
-        // Elasticsearch için modeli hazırla
+        // 4. KAYIT: Elasticsearch nesnesini oluştur
         var searchDoc = new SearchDocument
         {
             Id = message.DocumentId,
-            Content = message.RawText, // CV'nin veya Faturanın tüm metni
+            DocumentType = docType,
+            Content = cleanJson,
             Summary = summary,
             Sender = sender,
             Date = date,
@@ -55,8 +82,7 @@ public class IndexDocumentConsumer : IConsumer<IDataExtracted>
             IndexedAt = DateTime.UtcNow
         };
 
-        // Kaydet
         await _searchService.IndexDocumentAsync(searchDoc);
-        Console.WriteLine($"[Search] ✅ ElasticSearch'e kaydedildi.");
+        Console.WriteLine($"[Search] ✅ ElasticSearch'e kaydedildi. (Sender: {sender}, Amount: {amount})");
     }
 }

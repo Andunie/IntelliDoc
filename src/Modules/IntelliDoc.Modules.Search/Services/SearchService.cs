@@ -43,10 +43,9 @@ public class SearchService
         var response = await _client.SearchAsync<SearchDocument>(s => s
             .Query(q => q
                 .MultiMatch(m => m
-                    // Hangi alanlarda arama yapılacak?
                     .Fields(new[] { "content", "summary", "sender" })
                     .Query(query)
-                    .Fuzziness(new Fuzziness("AUTO")) // Yazım hatalarını tolere et
+                    .Fuzziness(new Fuzziness("AUTO"))   
                 )
             )
         );
