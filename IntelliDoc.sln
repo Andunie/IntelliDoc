@@ -19,6 +19,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IntelliDoc.Modules.Audit", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IntelliDoc.Modules.Search", "src\Modules\IntelliDoc.Modules.Search\IntelliDoc.Modules.Search.csproj", "{456756E9-D7F2-41AE-BB4B-500E1E5E50A5}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IntelliDoc.Modules.Identity", "src\Modules\IntelliDoc.Modules.Identity\IntelliDoc.Modules.Identity.csproj", "{E7B49B2C-992E-47CE-B504-312B377ACA13}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -101,6 +103,18 @@ Global
 		{456756E9-D7F2-41AE-BB4B-500E1E5E50A5}.Release|x64.Build.0 = Release|Any CPU
 		{456756E9-D7F2-41AE-BB4B-500E1E5E50A5}.Release|x86.ActiveCfg = Release|Any CPU
 		{456756E9-D7F2-41AE-BB4B-500E1E5E50A5}.Release|x86.Build.0 = Release|Any CPU
+		{E7B49B2C-992E-47CE-B504-312B377ACA13}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E7B49B2C-992E-47CE-B504-312B377ACA13}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E7B49B2C-992E-47CE-B504-312B377ACA13}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{E7B49B2C-992E-47CE-B504-312B377ACA13}.Debug|x64.Build.0 = Debug|Any CPU
+		{E7B49B2C-992E-47CE-B504-312B377ACA13}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{E7B49B2C-992E-47CE-B504-312B377ACA13}.Debug|x86.Build.0 = Debug|Any CPU
+		{E7B49B2C-992E-47CE-B504-312B377ACA13}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E7B49B2C-992E-47CE-B504-312B377ACA13}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E7B49B2C-992E-47CE-B504-312B377ACA13}.Release|x64.ActiveCfg = Release|Any CPU
+		{E7B49B2C-992E-47CE-B504-312B377ACA13}.Release|x64.Build.0 = Release|Any CPU
+		{E7B49B2C-992E-47CE-B504-312B377ACA13}.Release|x86.ActiveCfg = Release|Any CPU
+		{E7B49B2C-992E-47CE-B504-312B377ACA13}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -112,6 +126,7 @@ Global
 		{41616F21-AA47-4330-9927-F954C384328D} = {CA253913-39DE-BFD0-C9A3-4B7EC6FBDF17}
 		{D91DD44D-E5B9-4925-8E37-B2B94EBE9AC0} = {CA253913-39DE-BFD0-C9A3-4B7EC6FBDF17}
 		{456756E9-D7F2-41AE-BB4B-500E1E5E50A5} = {CA253913-39DE-BFD0-C9A3-4B7EC6FBDF17}
+		{E7B49B2C-992E-47CE-B504-312B377ACA13} = {CA253913-39DE-BFD0-C9A3-4B7EC6FBDF17}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {99AFD511-8DAA-4473-AA0C-E044B4D87049}
