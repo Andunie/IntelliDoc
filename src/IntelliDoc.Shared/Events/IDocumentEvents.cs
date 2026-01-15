@@ -12,6 +12,7 @@ public interface IDocumentUploaded
     Guid DocumentId { get; }
     string FileName { get; }
     string FilePath { get; } // MinIO path
+    string UploadedBy { get; } // Kullanıcı ID
     DateTime UploadedAt { get; }
 }
 

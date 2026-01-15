@@ -11,6 +11,7 @@ public class Document
     public long FileSize { get; set; }                           // Byte cinsinden boyut
     public DocumentStatus Status { get; set; }                   // İşlem durumu
     public DateTime UploadedAt { get; set; }
+    public string? UploadedBy { get; set; }
 }
 
 public enum DocumentStatus

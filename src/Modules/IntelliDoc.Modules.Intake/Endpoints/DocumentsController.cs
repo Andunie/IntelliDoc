@@ -5,6 +5,8 @@ using IntelliDoc.Shared.Events;
 using MassTransit;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 using System;
 using System.IO;
 using System.Runtime.InteropServices;
@@ -12,6 +14,7 @@ using System.Threading.Tasks;
 
 namespace IntelliDoc.Modules.Intake.Endpoints;
 
+[Authorize]
 [ApiController]
 [Route("api/documents")]
 public class DocumentsController : ControllerBase
@@ -30,6 +33,13 @@ public class DocumentsController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Upload(IFormFile file)
     {
+        // 1. Kullanıcıyı Bul
+        var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value; // Token'dan okur
+        // Veya "sub" claim'i: User.FindFirst("sub")?.Value
+
+        if (string.IsNullOrEmpty(userId))
+            return Unauthorized("Kimlik doğrulanamadı.");
+
         if (file == null || file.Length == 0)
             return BadRequest("Lütfen geçerli bir dosya yükleyin.");
 
@@ -41,6 +51,7 @@ public class DocumentsController : ControllerBase
         var document = new Document
         {
             Id = Guid.NewGuid(),
+            UploadedBy = userId,
             OriginalFileName = file.FileName,
             ContentType = file.ContentType,
             FileSize = file.Length,
@@ -58,6 +69,7 @@ public class DocumentsController : ControllerBase
             DocumentId = document.Id,
             FileName = document.OriginalFileName,
             FilePath = document.StoragePath,
+            UploadedBy = document.UploadedBy,
             UploadedAt = document.UploadedAt
         });
 

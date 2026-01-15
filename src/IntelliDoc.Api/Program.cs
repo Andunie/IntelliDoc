@@ -9,6 +9,7 @@ using IntelliDoc.Modules.Intake.Endpoints; // Controller'ý bulmak için
 using IntelliDoc.Modules.Search;
 using IntelliDoc.Modules.Search.Endpoints;
 using IntelliDoc.Shared.Extensions;
+using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.Mvc;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -43,7 +44,33 @@ builder.Services.AddControllers()
 
 // Swagger
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "IntelliDoc API", Version = "v1" });
+
+    // JWT Ayarý (Kilit Butonu Ýçin)
+    var securityScheme = new OpenApiSecurityScheme
+    {
+        Name = "Authorization",
+        Description = "Enter JWT Bearer token **_only_**",
+        In = ParameterLocation.Header,
+        Type = SecuritySchemeType.Http,
+        Scheme = "bearer", // Lowercase olmalý
+        BearerFormat = "JWT",
+        Reference = new OpenApiReference
+        {
+            Id = "Bearer",
+            Type = ReferenceType.SecurityScheme
+        }
+    };
+
+    c.AddSecurityDefinition("Bearer", securityScheme);
+
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        { securityScheme, new string[] { } }
+    });
+});
 
 var app = builder.Build();
 
