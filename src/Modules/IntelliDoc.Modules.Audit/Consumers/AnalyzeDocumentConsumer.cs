@@ -38,9 +38,11 @@ public class AnalyzeDocumentConsumer : IConsumer<IDataExtracted>
 
         // Örnek: "Entities" altındaki alanları gezelim
         if (root.TryGetProperty("extracted_data", out var data) &&
-            data.TryGetProperty("Entities", out var entities))
+            data.TryGetProperty("Fields", out var fields) &&
+            fields.ValueKind != JsonValueKind.Null && 
+            fields.ValueKind != JsonValueKind.Undefined)
         {
-            foreach (var property in entities.EnumerateObject())
+            foreach (var property in fields.EnumerateObject())
             {
                 // Değer null değilse kaydet
                 string value = property.Value.ToString();

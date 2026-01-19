@@ -48,29 +48,26 @@ public class AiResponse
 {
     public string? filename { get; set; }
     public string? text { get; set; }
+    public ExtractedData? extracted_data { get; set; }
     public double? confidence { get; set; }
     public string? error { get; set; }
 }
 
 public class ExtractedData
 {
-    public string? DocumentType { get; set; } // Fatura, Bordro...
+    public string? DocumentType { get; set; } // Fatura, Bordro, CV...
     public string? Summary { get; set; }
-    public Entities? Entities { get; set; }
-    public List<LineItem>? LineItems { get; set; }
+    public Dictionary<string, object>? Fields { get; set; }
+
+    // DİNAMİK TABLOLAR
+    // Fatura Kalemleri, Bordro Satırları vb.
+    public List<ExtractedTable>? Tables { get; set; }
 }
 
-public class Entities
+public class ExtractedTable
 {
-    public string? Date { get; set; }
-    public decimal? Amount { get; set; }
-    public string? Sender { get; set; }
-    public string? Receiver { get; set; }
-    public string? InvoiceNumber { get; set; }
-}
+    public string? Name { get; set; } // Tablonun adı (Örn: "LineItems")
 
-public class LineItem
-{
-    public string? Description { get; set; }
-    public string? Value { get; set; } // Tutar veya sayı
+    // Tablo satırları da dinamik sözlüklerdir
+    public List<Dictionary<string, object>>? Rows { get; set; }
 }

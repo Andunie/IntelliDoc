@@ -41,40 +41,57 @@ async def extract_text(file: UploadFile = File(...)):
 
         # 2. Gemini'ye Emir Ver (Prompt)
         prompt = """
-        Sen uzman bir finansal ve idari doküman analiz yapay zekasısın. 
-        Görevin: Verilen belge görüntüsünü analiz etmek ve yapılandırılmış veri çıkarmaktır.
+        Sen dünyanın en gelişmiş ve esnek doküman analiz yapay zekasısın.
+        Görevin: Verilen belge görüntüsünü analiz etmek ve belgenin türüne özgü kritik verileri dinamik bir yapıda çıkarmaktır.
 
         KURALLAR:
-        1. Belgenin TÜRÜNÜ (DocumentType) kesinlikle belirle (Örn: Fatura, Maaş Bordrosu, Dekont, Sözleşme, CV, Kimlik).
-        2. Tarihleri kesinlikle "YYYY-MM-DD" formatına çevir.
-        3. Parasal tutarları "1250.50" gibi sayısal formata çevir (Para birimi sembolünü at).
-        4. Tablolu verileri (kalemleri) "LineItems" içine ekle.
-        5. Bulamadığın veriler için null değerini kullan, asla "Bilinmiyor" veya "Yok" yazma.
-        6. Cevabın SADECE geçerli bir JSON objesi olsun. Markdown (```json) kullanma.
+        1. "DocumentType": Belgenin türünü sen tespit et (Fatura, CV, Maaş Bordrosu, Tapu, Sözleşme, Kimlik vb.).
+        2. "Summary": Belgenin içeriğini anlatan profesyonel, kısa bir özet yaz.
+        3. "Fields": Belgedeki önemli verileri "Anahtar": "Değer" çiftleri olarak çıkar.
+           - Anahtar (Key) isimlerini İngilizce ve PascalCase kullan (Örn: "TotalAmount", "EmployeeName", "SkillSet", "ParcelNumber").
+           - Sabit bir şablonun yok. Belgede ne görüyorsan, o belge türü için ne önemliyse onu al.
+           - Tarihleri her zaman "YYYY-MM-DD" formatına çevir.
+           - Parasal değerleri sayısal (float) formatta ver (Para birimi sembolünü at).
+        4. "Tables": Belgede tablo varsa (Fatura kalemleri, Bordro dökümü vb.), bunları satır satır çıkar.
+
+        ÇIKTI FORMATI (SADECE JSON):
+        Cevabın sadece aşağıdaki yapıda bir JSON olmalıdır. Yorum satırı veya Markdown ekleme.
 
         ---
-        ÖRNEK SENARYO (Referans alman için):
-        Girdi: Turkcell'den Ahmet Yılmaz'a gelmiş, 15 Ocak 2024 tarihli, GIB2024001 numaralı, toplam 500.50 TL tutarlı fatura. İçinde "Paket Ücreti: 400", "KDV: 100.50" yazıyor.
-        
-        İstenen Çıktı:
+        ÖRNEK 1 (Fatura Gelirse):
         {
             "DocumentType": "Fatura",
-            "Summary": "Turkcell İletişim A.Ş. tarafından Ahmet Yılmaz adına düzenlenmiş telekomünikasyon faturası.",
-            "Entities": {
-                "Date": "2024-01-15",
-                "Amount": 500.50,
-                "Sender": "Turkcell İletişim A.Ş.",
-                "Receiver": "Ahmet Yılmaz",
+            "Summary": "Turkcell İletişim A.Ş. faturası.",
+            "Fields": {
+                "InvoiceDate": "2024-01-15",
+                "TotalAmount": 500.50,
+                "VendorName": "Turkcell",
                 "InvoiceNumber": "GIB2024001"
             },
-            "LineItems": [
-                {"Description": "Paket Ücreti", "Value": "400.00"},
-                {"Description": "KDV", "Value": "100.50"}
+            "Tables": [
+                {
+                    "Name": "Fatura Kalemleri",
+                    "Rows": [ {"Description": "Paket", "Price": 400}, {"Description": "KDV", "Price": 100.50} ]
+                }
             ]
+        }
+
+        ÖRNEK 2 (CV Gelirse):
+        {
+            "DocumentType": "CV",
+            "Summary": "Yazılım Uzmanı Ahmet Yılmaz'ın özgeçmişi.",
+            "Fields": {
+                "CandidateName": "Ahmet Yılmaz",
+                "Email": "ahmet@mail.com",
+                "Phone": "+905551234567",
+                "Skills": ["C#", "Python", "Docker"],
+                "ExperienceYears": 5
+            },
+            "Tables": []
         }
         ---
 
-        Şimdi yukarıdaki kurallara ve örneğe uygun olarak, sana gönderdiğim belgeyi analiz et.
+        Şimdi sana gönderdiğim belgeyi bu esnek yapıya göre analiz et.
         """
 
         # 3. İsteği Gönder (Resim + Prompt)
