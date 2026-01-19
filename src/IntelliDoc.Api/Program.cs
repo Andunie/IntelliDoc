@@ -14,6 +14,17 @@ using Microsoft.AspNetCore.Mvc;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontend",
+        policy =>
+        {
+            policy.WithOrigins("http://localhost:3000") // Frontend adresi
+                  .AllowAnyHeader()
+                  .AllowAnyMethod();
+        });
+});
+
 // 1. ALTYAPIYI YÜKLE
 builder.Services.AddSharedInfrastructure(builder.Configuration,
     typeof(IntelliDoc.Modules.Extraction.ExtractionModuleExtensions).Assembly,
@@ -74,6 +85,8 @@ builder.Services.AddSwaggerGen(c =>
 
 var app = builder.Build();
 
+app.UseCors("AllowFrontend");
+
 // Pipeline
 if (app.Environment.IsDevelopment())
 {
@@ -81,7 +94,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 
 app.UseAuthentication();
 app.UseAuthorization();

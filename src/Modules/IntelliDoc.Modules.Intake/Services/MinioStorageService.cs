@@ -44,4 +44,14 @@ public class MinioStorageService
 
         return objectName; // MinIO'daki dosya adını dön
     }
+
+    public async Task<string> GetPresignedUrlAsync(string objectName)
+    {
+        var args = new PresignedGetObjectArgs()
+            .WithBucket(_bucketName)
+            .WithObject(objectName)
+            .WithExpiry(3600); // Link 1 saat (3600 sn) boyunca geçerli olsun
+
+        return await _minioClient.PresignedGetObjectAsync(args);
+    }
 }

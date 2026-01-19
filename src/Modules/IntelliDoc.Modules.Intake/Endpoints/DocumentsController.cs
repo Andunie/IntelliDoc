@@ -75,4 +75,53 @@ public class DocumentsController : ControllerBase
 
         return Ok(new { Message = "Dosya başarıyla yüklendi.", DocumentId = document.Id });
     }
+
+    [HttpGet]
+    public async Task<IActionResult> GetAll()
+    {
+        var documents = _dbContext.Documents
+            .OrderByDescending(d => d.UploadedAt)
+            .Select(d => new
+            {
+                d.Id,
+                d.OriginalFileName,
+                d.Status,
+                d.UploadedAt,
+                d.UploadedBy
+            })
+            .ToList();
+
+        return Ok(documents);
+    }
+
+    // Tekil Belgeyi Getir (Opsiyonel ama Workbench için iyi olabilir)
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetById(Guid id)
+    {
+        var document = await _dbContext.Documents.FindAsync(id);
+        if (document == null) return NotFound("Belge bulunamadı.");
+
+        return Ok(new
+        {
+            document.Id,
+            document.OriginalFileName,
+            document.Status,
+            document.UploadedAt,
+            document.UploadedBy,
+            document.StoragePath
+        });
+    }
+
+    [HttpGet("{id}/download-url")]
+    public async Task<IActionResult> GetDownloadUrl(Guid id)
+    {
+        var document = await _dbContext.Documents.FindAsync(id);
+        if (document == null) return NotFound("Belge bulunamadı.");
+        // MinIO servisinde bu metodun (GetPresignedUrlAsync) olması gerekir.
+        // Dosya adını (StoragePath) verip, 1 saatlik geçici bir URL alacağız.
+        var url = await _storageService.GetPresignedUrlAsync(document.StoragePath);
+
+        // Eğer MinIO servisinde henüz bu metot yoksa, MinIO Client'ının "PresignedGetObjectAsync" metodunu kullanabilirsin.
+        return Ok(new { Url = url });
+    }
 }
