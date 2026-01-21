@@ -18,6 +18,7 @@ public static class ExtractionModuleExtensions
 
         // 2. HTTP Client (AI Service için)
         services.AddHttpClient<AiExtractionService>();
+        services.AddScoped<ExcelService>();
 
         // 3. MinIO Client (Burada da lazım çünkü Intake modülüne bağımlı değiliz)
         services.AddMinio(configureClient => configureClient

@@ -57,11 +57,17 @@ public class ExtractedData
 {
     public string? DocumentType { get; set; } // Fatura, Bordro, CV...
     public string? Summary { get; set; }
-    public Dictionary<string, object>? Fields { get; set; }
+    public Dictionary<string, object>? Entities { get; set; }
 
-    // DİNAMİK TABLOLAR
-    // Fatura Kalemleri, Bordro Satırları vb.
+    // Tablolar (İş Deneyimi, Fatura Kalemleri...)
     public List<ExtractedTable>? Tables { get; set; }
+
+    // Geriye dönük uyumluluk (Eğer Gemini Fields dönerse)
+    public Dictionary<string, object>? Fields
+    {
+        get => Entities;
+        set => Entities = value;
+    }
 }
 
 public class ExtractedTable

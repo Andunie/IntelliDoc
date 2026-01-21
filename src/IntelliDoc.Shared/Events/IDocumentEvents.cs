@@ -33,3 +33,10 @@ public interface IDocumentAudited
     bool IsApproved { get; }
     string AuditRemarks { get; } // "Mükerrer kayıt tespit edildi" vb.
 }
+
+public interface IDocumentApproved
+{
+    Guid DocumentId { get; }
+    string ApprovedBy { get; }
+    DateTime ApprovedAt { get; }
+}

@@ -1,4 +1,6 @@
 ﻿using IntelliDoc.Modules.Audit.Data;
+using IntelliDoc.Shared.Events;
+using MassTransit;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -9,10 +11,12 @@ namespace IntelliDoc.Modules.Audit.Endpoints;
 public class AuditController : ControllerBase
 {
     private readonly AuditDbContext _dbContext;
+    private readonly IPublishEndpoint _publishEndpoint;
 
-    public AuditController(AuditDbContext dbContext)
+    public AuditController(AuditDbContext dbContext, IPublishEndpoint publishEndpoint)
     {
         _dbContext = dbContext;
+        _publishEndpoint = publishEndpoint;
     }
 
     // Belgenin tüm tarihçesini getir
@@ -54,7 +58,38 @@ public class AuditController : ControllerBase
         _dbContext.FieldHistories.Add(history);
         await _dbContext.SaveChangesAsync();
 
+        await _publishEndpoint.Publish<IFieldUpdated>(new
+        {
+            DocumentId = request.DocumentId,
+            FieldName = request.FieldName,
+            NewValue = request.NewValue,
+            UpdatedBy = request.UserId,
+            UpdatedAt = DateTime.UtcNow
+        });
+
+
         return Ok(new { Message = "Değişiklik kaydedildi.", HistoryId = history.Id });
+    }
+
+    [HttpPost("approve/{documentId}")]
+    public async Task<IActionResult> ApproveDocument(Guid documentId)
+    {
+        // 1. Audit kaydını bul
+        var record = await _dbContext.AuditRecords.FirstOrDefaultAsync(x => x.DocumentId == documentId);
+        if (record == null) return NotFound();
+
+        // 2. Durumu güncelle (Eğer AuditRecord'da Status yoksa, BusinessRuleLog atabiliriz veya Status alanı ekleyebiliriz)
+        // Şimdilik sadece Event fırlatalım, en temizi.
+
+        // 3. Sisteme Haber Ver: "Bu belge onaylandı!"
+        await _publishEndpoint.Publish<IDocumentApproved>(new
+        {
+            DocumentId = documentId,
+            ApprovedBy = "CurrentUser", // User.Identity.Name
+            ApprovedAt = DateTime.UtcNow
+        });
+
+        return Ok(new { Message = "Belge onaylandı." });
     }
 }
 

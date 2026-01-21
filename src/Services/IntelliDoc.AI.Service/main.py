@@ -41,57 +41,52 @@ async def extract_text(file: UploadFile = File(...)):
 
         # 2. Gemini'ye Emir Ver (Prompt)
         prompt = """
-        Sen dünyanın en gelişmiş ve esnek doküman analiz yapay zekasısın.
-        Görevin: Verilen belge görüntüsünü analiz etmek ve belgenin türüne özgü kritik verileri dinamik bir yapıda çıkarmaktır.
+        Sen uzman bir doküman analiz yapay zekasısın. Görevin, belge türünü tespit etmek ve yapılandırılmış veri çıkarmaktır.
 
-        KURALLAR:
-        1. "DocumentType": Belgenin türünü sen tespit et (Fatura, CV, Maaş Bordrosu, Tapu, Sözleşme, Kimlik vb.).
-        2. "Summary": Belgenin içeriğini anlatan profesyonel, kısa bir özet yaz.
-        3. "Fields": Belgedeki önemli verileri "Anahtar": "Değer" çiftleri olarak çıkar.
-           - Anahtar (Key) isimlerini İngilizce ve PascalCase kullan (Örn: "TotalAmount", "EmployeeName", "SkillSet", "ParcelNumber").
-           - Sabit bir şablonun yok. Belgede ne görüyorsan, o belge türü için ne önemliyse onu al.
-           - Tarihleri her zaman "YYYY-MM-DD" formatına çevir.
-           - Parasal değerleri sayısal (float) formatta ver (Para birimi sembolünü at).
-        4. "Tables": Belgede tablo varsa (Fatura kalemleri, Bordro dökümü vb.), bunları satır satır çıkar.
+        ADIM 1: Belge Türünü Belirle (Fatura, CV, Bordro, Sözleşme, Dekont vb.)
 
-        ÇIKTI FORMATI (SADECE JSON):
-        Cevabın sadece aşağıdaki yapıda bir JSON olmalıdır. Yorum satırı veya Markdown ekleme.
+        ADIM 2: Türüne göre aşağıdaki alanları çıkar:
 
-        ---
-        ÖRNEK 1 (Fatura Gelirse):
+        A) FİNANSAL (Fatura, Fiş, Dekont):
+           - Entities: Date (YYYY-MM-DD), Amount (Sayı), Currency, InvoiceNumber, Sender, Receiver, SenderTaxID, ReceiverTaxID, ETTN.
+           - Tables: "LineItems" (Description, Quantity, UnitPrice, Total).
+
+        B) İNSAN KAYNAKLARI (CV / Özgeçmiş):
+           - Entities: Name, JobTitle, Email, Phone, Location, BirthDate, Gender.
+           - Tables: 
+             - "WorkExperience" (Company, Role, StartDate, EndDate, Description).
+             - "Education" (School, Degree, FieldOfStudy, StartDate, EndDate).
+             - "Skills" (SkillName). **(ÖNEMLİ: Yetenekleri virgülle ayırma, her birini ayrı satır olarak Skills tablosuna ekle)**
+             - "Languages" (Language, Level).
+
+        C) MAAŞ BORDROSU (Payslip):
+           - Entities: EmployeeName, EmployeeTCKN, Period, NetSalary, GrossSalary, CompanyName.
+           - Tables: "Earnings" (Type, Amount), "Deductions" (Type, Amount).
+
+        D) DİĞER (Sözleşme, Tapu vb.):
+           - Entities: DocumentDate, Parties (Taraflar), ReferenceNumber.
+           - Summary: Belgenin özeti.
+
+        ÇIKTI FORMATI (JSON):
         {
-            "DocumentType": "Fatura",
-            "Summary": "Turkcell İletişim A.Ş. faturası.",
-            "Fields": {
-                "InvoiceDate": "2024-01-15",
-                "TotalAmount": 500.50,
-                "VendorName": "Turkcell",
-                "InvoiceNumber": "GIB2024001"
+            "DocumentType": "...",
+            "Summary": "...",
+            "Entities": {
+                // Buraya sadece "Anahtar": "Değer" çiftleri gelecek. İç içe obje veya liste YOK.
+                "Name": "Ahmet Yılmaz",
+                "Amount": 100.50
             },
             "Tables": [
                 {
-                    "Name": "Fatura Kalemleri",
-                    "Rows": [ {"Description": "Paket", "Price": 400}, {"Description": "KDV", "Price": 100.50} ]
+                    "Name": "WorkExperience", // veya "LineItems"
+                    "Rows": [
+                        {"Company": "ABC", "Role": "Dev"}
+                    ]
                 }
             ]
         }
 
-        ÖRNEK 2 (CV Gelirse):
-        {
-            "DocumentType": "CV",
-            "Summary": "Yazılım Uzmanı Ahmet Yılmaz'ın özgeçmişi.",
-            "Fields": {
-                "CandidateName": "Ahmet Yılmaz",
-                "Email": "ahmet@mail.com",
-                "Phone": "+905551234567",
-                "Skills": ["C#", "Python", "Docker"],
-                "ExperienceYears": 5
-            },
-            "Tables": []
-        }
-        ---
-
-        Şimdi sana gönderdiğim belgeyi bu esnek yapıya göre analiz et.
+        Use pure JSON objects/arrays for nested data, do NOT use stringified JSON.
         """
 
         # 3. İsteği Gönder (Resim + Prompt)
