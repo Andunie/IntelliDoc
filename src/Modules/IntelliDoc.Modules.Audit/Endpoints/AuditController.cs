@@ -1,11 +1,13 @@
 ﻿using IntelliDoc.Modules.Audit.Data;
 using IntelliDoc.Shared.Events;
 using MassTransit;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace IntelliDoc.Modules.Audit.Endpoints;
 
+[Authorize]
 [ApiController]
 [Route("api/audit")]
 public class AuditController : ControllerBase
@@ -90,6 +92,37 @@ public class AuditController : ControllerBase
         });
 
         return Ok(new { Message = "Belge onaylandı." });
+    }
+
+    [HttpGet("logs")]
+    [Authorize] // Sadece giriş yapanlar
+    public async Task<IActionResult> GetAllLogs()
+    {
+        // 1. Giriş yapan kullanıcının ID'sini al
+        var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+        // Veya token yapına göre: User.FindFirst("sub")?.Value
+
+        if (string.IsNullOrEmpty(userId)) return Unauthorized();
+
+        // 2. Sadece BU kullanıcının yaptığı değişiklikleri getir
+        var logs = await _dbContext.FieldHistories
+            .Include(h => h.AuditRecord)
+            .Where(h => h.ChangedBy == userId) // <--- FİLTRE BURADA
+            .OrderByDescending(h => h.ChangedAt)
+            .Take(100)
+            .Select(h => new
+            {
+                Id = h.Id,
+                Timestamp = h.ChangedAt,
+                User = h.ChangedBy,
+                Action = "Update Field",
+                Details = $"{h.FieldName}: {h.OldValue} -> {h.NewValue}",
+                Reference = h.AuditRecord.DocumentId,
+                Reason = h.ChangeReason
+            })
+            .ToListAsync();
+
+        return Ok(logs);
     }
 }
 

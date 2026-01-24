@@ -23,8 +23,9 @@ public class AuditDbContext : DbContext
         // İlişkiler
         modelBuilder.Entity<AuditRecord>()
             .HasMany(r => r.FieldHistories)
-            .WithOne()
-            .HasForeignKey(fh => fh.AuditRecordId);
+            .WithOne(fh => fh.AuditRecord)
+            .HasForeignKey(fh => fh.AuditRecordId)
+            .OnDelete(DeleteBehavior.Cascade);
 
         base.OnModelCreating(modelBuilder);
     }

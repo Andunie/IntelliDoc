@@ -11,6 +11,8 @@ public class FieldHistory
     public string? OldValue { get; set; } // Örn: "100.00" (veya null)
     public string? NewValue { get; set; } // Örn: "100.50"
 
+    public AuditRecord AuditRecord { get; set; } = null!;
+
     public double ConfidenceScore { get; set; } // 0.95
     public string ChangedBy { get; set; } = "SYSTEM"; // "SYSTEM" veya "user-123"
     public string? ChangeReason { get; set; } // "OCR Correction"
