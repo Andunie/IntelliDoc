@@ -8,7 +8,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace IntelliDoc.Modules.Audit.Data.Migrations
+namespace IntelliDoc.Modules.Audit.Migrations
 {
     [DbContext(typeof(AuditDbContext))]
     partial class AuditDbContextModelSnapshot : ModelSnapshot
@@ -120,11 +120,13 @@ namespace IntelliDoc.Modules.Audit.Data.Migrations
 
             modelBuilder.Entity("IntelliDoc.Modules.Audit.Entities.FieldHistory", b =>
                 {
-                    b.HasOne("IntelliDoc.Modules.Audit.Entities.AuditRecord", null)
+                    b.HasOne("IntelliDoc.Modules.Audit.Entities.AuditRecord", "AuditRecord")
                         .WithMany("FieldHistories")
                         .HasForeignKey("AuditRecordId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("AuditRecord");
                 });
 
             modelBuilder.Entity("IntelliDoc.Modules.Audit.Entities.AuditRecord", b =>

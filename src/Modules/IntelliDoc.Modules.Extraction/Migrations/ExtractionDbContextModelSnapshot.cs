@@ -3,20 +3,17 @@ using System;
 using IntelliDoc.Modules.Extraction.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace IntelliDoc.Modules.Extraction.Data.Migrations
+namespace IntelliDoc.Modules.Extraction.Migrations
 {
     [DbContext(typeof(ExtractionDbContext))]
-    [Migration("20260104175611_InitialExtraction")]
-    partial class InitialExtraction
+    partial class ExtractionDbContextModelSnapshot : ModelSnapshot
     {
-        /// <inheritdoc />
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -45,6 +42,10 @@ namespace IntelliDoc.Modules.Extraction.Data.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("RawText")
+                        .HasColumnType("text");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("Id");

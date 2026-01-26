@@ -3,10 +3,10 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace IntelliDoc.Modules.Audit.Data.Migrations
+namespace IntelliDoc.Modules.Audit.Migrations
 {
     /// <inheritdoc />
-    public partial class EnterpriseAudit : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

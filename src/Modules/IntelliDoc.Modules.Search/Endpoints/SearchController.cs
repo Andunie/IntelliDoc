@@ -1,5 +1,6 @@
 ﻿using IntelliDoc.Modules.Search.Services;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace IntelliDoc.Modules.Search.Endpoints;
 
@@ -17,10 +18,10 @@ public class SearchController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> Search([FromQuery] string q)
     {
-        if (string.IsNullOrWhiteSpace(q))
-            return BadRequest("Arama terimi giriniz.");
+        var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (string.IsNullOrEmpty(userId)) return Unauthorized();
 
-        var results = await _searchService.SearchAsync(q);
+        var results = await _searchService.SearchAsync(q, userId);
         return Ok(results);
     }
 }

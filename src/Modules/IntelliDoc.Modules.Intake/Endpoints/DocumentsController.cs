@@ -94,6 +94,32 @@ public class DocumentsController : ControllerBase
         return Ok(documents);
     }
 
+    [HttpGet("mine")]
+    public async Task<IActionResult> GetMine()
+    {
+        // 1. Token'dan Kullanıcı ID'sini al (Upload metoduyla aynı mantık)
+        var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+        if (string.IsNullOrEmpty(userId))
+            return Unauthorized("Kullanıcı kimliği bulunamadı.");
+
+        // 2. Sadece bu kullanıcının belgelerini getir
+        var documents = _dbContext.Documents
+            .Where(d => d.UploadedBy == userId) // <--- KRİTİK FİLTRE
+            .OrderByDescending(d => d.UploadedAt)
+            .Select(d => new
+            {
+                d.Id,
+                d.OriginalFileName,
+                d.Status, // Enum değeri (0, 1, 2...) döner
+                d.UploadedAt,
+                d.UploadedBy
+            })
+            .ToList();
+
+        return Ok(documents);
+    }
+
     // Tekil Belgeyi Getir (Opsiyonel ama Workbench için iyi olabilir)
     [HttpGet("{id}")]
     public async Task<IActionResult> GetById(Guid id)

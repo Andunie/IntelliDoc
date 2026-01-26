@@ -26,7 +26,8 @@ public static class IdentityModuleExtensions
             opt.Password.RequireDigit = false;
             opt.Password.RequireUppercase = false;
         })
-        .AddEntityFrameworkStores<IdentityDbContext>();
+        .AddEntityFrameworkStores<IdentityDbContext>()
+        .AddDefaultTokenProviders();
 
         // 3. JWT Authentication
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -46,6 +47,7 @@ public static class IdentityModuleExtensions
 
         // 4. Servisler
         services.AddScoped<TokenService>();
+        services.AddScoped<EmailService>();
 
         return services;
     }

@@ -56,15 +56,15 @@ namespace IntelliDoc.Modules.Identity.Endpoints
         }
 
         [HttpPost("confirm-email")]
-        public async Task<IActionResult> ConfirmEmail(string userId, string token)
+        public async Task<IActionResult> ConfirmEmail([FromBody] ConfirmEmailDto dto) // <-- DEĞİŞİKLİK
         {
-            var user = await _userManager.FindByIdAsync(userId);
+            var user = await _userManager.FindByIdAsync(dto.UserId);
             if (user == null) return BadRequest("Kullanıcı yok.");
 
-            var result = await _userManager.ConfirmEmailAsync(user, token);
+            var result = await _userManager.ConfirmEmailAsync(user, dto.Token);
             if (result.Succeeded) return Ok("Email doğrulandı.");
 
-            return BadRequest("Doğrulama başarısız.");
+            return BadRequest($"Hata: {string.Join(", ", result.Errors.Select(e => e.Description))}");
         }
 
         [HttpPost("login")]
@@ -75,7 +75,7 @@ namespace IntelliDoc.Modules.Identity.Endpoints
             if (user == null) return Unauthorized("Kullanıcı bulunamadı.");
 
             // 2. Şifreyi Kontrol Et
-            var checkPassword = await _userManager.CheckPasswordAsync(user, dto.Password);
+            var checkPassword = await _userManager.CheckPasswordAsync(user, dto.Password);  
             if (!checkPassword) return Unauthorized("Şifre yanlış.");
 
             // 3. E-Posta Doğrulaması Kontrolü
@@ -102,7 +102,6 @@ namespace IntelliDoc.Modules.Identity.Endpoints
             var token = await _userManager.GeneratePasswordResetTokenAsync(user);
 
             // 2. Link Oluştur (Frontend URL)
-            // Örn: http://localhost:3000/auth/reset-password?email=...&token=...
             var link = $"http://localhost:3000/auth/reset-password?email={user.Email}&token={System.Net.WebUtility.UrlEncode(token)}";
 
             // 3. Mail At
@@ -131,6 +130,7 @@ namespace IntelliDoc.Modules.Identity.Endpoints
     public record RegisterDto(string Email, string Password, string FullName, string Department);
     public record LoginDto(string Email, string Password);
 
+    public record ConfirmEmailDto(string UserId, string Token);
     public record ForgotPasswordDto(string Email);
     public record ResetPasswordDto(string Email, string Token, string NewPassword);
 }

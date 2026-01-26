@@ -19,6 +19,8 @@ public class IndexDocumentConsumer : IConsumer<IDataExtracted>
         var message = context.Message;
         Console.WriteLine($"[Search] İndexleme başladı: {message.DocumentId}");
 
+        Console.WriteLine($"[Search] Gelen Mesaj - DocId: {message.DocumentId}, UserId: '{message.UserId}'");
+
         await _searchService.CreateIndexIfNotExistsAsync();
 
         // 1. TEMİZLİK: Gemini bazen ```json etiketiyle gönderiyor, onu temizleyelim.
@@ -73,6 +75,7 @@ public class IndexDocumentConsumer : IConsumer<IDataExtracted>
         var searchDoc = new SearchDocument
         {
             Id = message.DocumentId,
+            UserId = message.UserId,
             DocumentType = docType,
             Content = cleanJson,
             Summary = summary,

@@ -9,11 +9,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace IntelliDoc.Modules.Audit.Data.Migrations
+namespace IntelliDoc.Modules.Audit.Migrations
 {
     [DbContext(typeof(AuditDbContext))]
-    [Migration("20260107152302_EnterpriseAudit")]
-    partial class EnterpriseAudit
+    [Migration("20260126141401_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -123,11 +123,13 @@ namespace IntelliDoc.Modules.Audit.Data.Migrations
 
             modelBuilder.Entity("IntelliDoc.Modules.Audit.Entities.FieldHistory", b =>
                 {
-                    b.HasOne("IntelliDoc.Modules.Audit.Entities.AuditRecord", null)
+                    b.HasOne("IntelliDoc.Modules.Audit.Entities.AuditRecord", "AuditRecord")
                         .WithMany("FieldHistories")
                         .HasForeignKey("AuditRecordId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("AuditRecord");
                 });
 
             modelBuilder.Entity("IntelliDoc.Modules.Audit.Entities.AuditRecord", b =>

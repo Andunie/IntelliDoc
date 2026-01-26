@@ -38,21 +38,31 @@ public class SearchService
     }
 
     // 3. Arama Yap (Full Text Search)
-    public async Task<List<SearchDocument>> SearchAsync(string query)
+    public async Task<List<SearchDocument>> SearchAsync(string query, string userId)
     {
         var response = await _client.SearchAsync<SearchDocument>(s => s
+            .Index(IndexName)
             .Query(q => q
-                .MultiMatch(m => m
-                    .Fields(new[] { "content", "summary", "sender" })
-                    .Query(query)
-                    .Fuzziness(new Fuzziness("AUTO"))   
+                .Bool(b => b
+                    // 1. Kısım: Sadece bu UserId (Zorunlu Filtre)
+                    .Filter(f => f
+                        .Term(t => t.Field(doc => doc.UserId.Suffix("keyword")).Value(userId))
+                    )
+                    // 2. Kısım: Kelime Araması (Zorunlu Eşleşme)
+                    .Must(m => m
+                        .MultiMatch(mm => mm
+                            .Fields(new[] { "content", "summary", "sender", "documentType" }) // Düz String Array
+                            .Query(query)
+                            .Fuzziness(new Fuzziness("AUTO"))
+                        )
+                    )
                 )
             )
         );
 
         if (!response.IsValidResponse)
         {
-            Console.WriteLine($"Elastic Hata: {response.DebugInformation}");
+            // Hata varsa boş dön
             return new List<SearchDocument>();
         }
 
@@ -64,7 +74,8 @@ public class SearchService
 public class SearchDocument
 {
     public Guid Id { get; set; }
-    public string DocumentType { get; set; } // <--- EKSİK OLABİLİR, EKLEYİN
+    public string UserId { get; set; }
+    public string DocumentType { get; set; } 
     public string Content { get; set; }
     public string Summary { get; set; }
     public string Sender { get; set; }

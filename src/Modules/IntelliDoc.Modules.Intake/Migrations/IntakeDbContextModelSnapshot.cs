@@ -3,20 +3,17 @@ using System;
 using IntelliDoc.Modules.Intake.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace IntelliDoc.Modules.Intake.Data.Migrations
+namespace IntelliDoc.Modules.Intake.Migrations
 {
     [DbContext(typeof(IntakeDbContext))]
-    [Migration("20260103174757_InitialIntake")]
-    partial class InitialIntake
+    partial class IntakeDbContextModelSnapshot : ModelSnapshot
     {
-        /// <inheritdoc />
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -54,6 +51,9 @@ namespace IntelliDoc.Modules.Intake.Data.Migrations
 
                     b.Property<DateTime>("UploadedAt")
                         .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("UploadedBy")
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
 

@@ -3,10 +3,10 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace IntelliDoc.Modules.Extraction.Data.Migrations
+namespace IntelliDoc.Modules.Extraction.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialExtraction : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -21,6 +21,7 @@ namespace IntelliDoc.Modules.Extraction.Data.Migrations
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     DocumentId = table.Column<Guid>(type: "uuid", nullable: false),
+                    UserId = table.Column<string>(type: "text", nullable: false),
                     JsonData = table.Column<string>(type: "jsonb", nullable: true),
                     RawText = table.Column<string>(type: "text", nullable: true),
                     ConfidenceScore = table.Column<double>(type: "double precision", nullable: false),

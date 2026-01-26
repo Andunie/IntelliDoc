@@ -57,6 +57,7 @@ public class ExtractDocumentConsumer : IConsumer<IDocumentUploaded>
             {
                 Id = Guid.NewGuid(),
                 DocumentId = message.DocumentId,
+                UserId = message.UploadedBy,
                 RawText = aiResult.text ?? "",
                 JsonData = JsonSerializer.Serialize(aiResult), // Şimdilik tüm cevabı basıyoruz
                 ProcessedAt = DateTime.UtcNow,
@@ -78,6 +79,7 @@ public class ExtractDocumentConsumer : IConsumer<IDocumentUploaded>
             await _publishEndpoint.Publish<IDataExtracted>(new
             {
                 DocumentId = message.DocumentId,
+                UserId = message.UploadedBy,
                 RawText = aiResult.text ?? "",
                 JsonData = JsonSerializer.Serialize(aiResult),
                 Success = true,

@@ -20,6 +20,7 @@ public interface IDocumentUploaded
 public interface IDataExtracted
 {
     Guid DocumentId { get; }
+    string UserId { get; }
     string RawText { get; } // Ham metin (Search için)
     string JsonData { get; } // Yapılandırılmış veri (Fatura No, Tutar vb.)
     bool Success { get; }
