@@ -1,0 +1,21 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MailKit" Version="4.14.1" />
+    <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="9.0.11" />
+    <PackageReference Include="Microsoft.Extensions.Identity.Stores" Version="9.0.11" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\src\IntelliDoc.Shared\IntelliDoc.Shared.csproj" />
+    <ProjectReference Include="..\src\Modules\IntelliDoc.Modules.Identity\IntelliDoc.Modules.Identity.csproj" />
+    <ProjectReference Include="..\src\Modules\IntelliDoc.Modules.Intake\IntelliDoc.Modules.Intake.csproj" />
+  </ItemGroup>
+
+</Project>

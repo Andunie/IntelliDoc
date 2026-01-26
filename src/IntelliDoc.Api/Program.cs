@@ -4,8 +4,8 @@ using IntelliDoc.Modules.Extraction;
 using IntelliDoc.Modules.Extraction.Endpoints;
 using IntelliDoc.Modules.Identity;
 using IntelliDoc.Modules.Identity.Endpoints;
-using IntelliDoc.Modules.Intake; // Modülü kullanmak için
-using IntelliDoc.Modules.Intake.Endpoints; // Controller'ý bulmak için
+using IntelliDoc.Modules.Intake;
+using IntelliDoc.Modules.Intake.Endpoints;
 using IntelliDoc.Modules.Search;
 using IntelliDoc.Modules.Search.Endpoints;
 using IntelliDoc.Shared.Extensions;
@@ -42,6 +42,9 @@ builder.Services.AddAuditModule(builder.Configuration);
 builder.Services.AddSearchModule(builder.Configuration);
 
 builder.Services.AddIdentityModule(builder.Configuration);
+
+// Email Botunu Arka Plan Servisi Olarak Baþlat
+builder.Services.AddHostedService<IntelliDoc.Modules.EmailIngestion.Services.EmailListenerService>();
 
 // 3. CONTROLLER'LARI TANIT (ÝÞTE BURASI EKSÝKTÝ VEYA HATALIYDI)
 // API'ye diyoruz ki: "Sadece kendine bakma, Intake modülündeki Controller'larý da al."

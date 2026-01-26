@@ -16,6 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\IntelliDoc.Modules.EmailIngestion\IntelliDoc.Modules.EmailIngestion.csproj" />
     <ProjectReference Include="..\Modules\IntelliDoc.Modules.Intake\IntelliDoc.Modules.Intake.csproj" />
     <ProjectReference Include="..\Modules\IntelliDoc.Modules.Extraction\IntelliDoc.Modules.Extraction.csproj" />
     <ProjectReference Include="..\Modules\IntelliDoc.Modules.Audit\IntelliDoc.Modules.Audit.csproj" />
