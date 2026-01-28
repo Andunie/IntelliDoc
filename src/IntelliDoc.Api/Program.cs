@@ -53,7 +53,8 @@ builder.Services.AddControllers()
     .AddApplicationPart(typeof(ExtractionController).Assembly)
     .AddApplicationPart(typeof(AuditController).Assembly)
     .AddApplicationPart(typeof(SearchController).Assembly)
-    .AddApplicationPart(typeof(AuthController).Assembly
+    .AddApplicationPart(typeof(AuthController).Assembly)
+    .AddApplicationPart(typeof(AnalyticsController).Assembly
 );
 
 // Swagger
