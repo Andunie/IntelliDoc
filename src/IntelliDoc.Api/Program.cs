@@ -11,6 +11,8 @@ using IntelliDoc.Modules.Search.Endpoints;
 using IntelliDoc.Shared.Extensions;
 using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.Mvc;
+using IntelliDoc.Modules.Integration.Endpoints;
+using IntelliDoc.Modules.Integration;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -29,7 +31,9 @@ builder.Services.AddCors(options =>
 builder.Services.AddSharedInfrastructure(builder.Configuration,
     typeof(IntelliDoc.Modules.Extraction.ExtractionModuleExtensions).Assembly,
     typeof(IntelliDoc.Modules.Audit.AuditModuleExtensions).Assembly,
-    typeof(IntelliDoc.Modules.Search.SearchModuleExtensions).Assembly
+    typeof(IntelliDoc.Modules.Search.SearchModuleExtensions).Assembly,
+    typeof(IntelliDoc.Modules.Intake.IntakeModuleExtensions).Assembly,
+    typeof(IntelliDoc.Modules.Integration.IntegrationModuleExtensions).Assembly
 );
 
 // 2. MODÜLLERÝ YÜKLE
@@ -43,18 +47,19 @@ builder.Services.AddSearchModule(builder.Configuration);
 
 builder.Services.AddIdentityModule(builder.Configuration);
 
+builder.Services.AddIntegrationModule(builder.Configuration);
+
 // Email Botunu Arka Plan Servisi Olarak Baþlat
 builder.Services.AddHostedService<IntelliDoc.Modules.EmailIngestion.Services.EmailListenerService>();
 
-// 3. CONTROLLER'LARI TANIT (ÝÞTE BURASI EKSÝKTÝ VEYA HATALIYDI)
-// API'ye diyoruz ki: "Sadece kendine bakma, Intake modülündeki Controller'larý da al."
 builder.Services.AddControllers()
     .AddApplicationPart(typeof(DocumentsController).Assembly)
     .AddApplicationPart(typeof(ExtractionController).Assembly)
     .AddApplicationPart(typeof(AuditController).Assembly)
     .AddApplicationPart(typeof(SearchController).Assembly)
     .AddApplicationPart(typeof(AuthController).Assembly)
-    .AddApplicationPart(typeof(AnalyticsController).Assembly
+    .AddApplicationPart(typeof(AnalyticsController).Assembly)
+    .AddApplicationPart(typeof(SettingsController).Assembly
 );
 
 // Swagger

@@ -4,6 +4,8 @@ using MassTransit;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
+using static MassTransit.ValidationResultExtensions;
 
 namespace IntelliDoc.Modules.Audit.Endpoints;
 
@@ -76,22 +78,17 @@ public class AuditController : ControllerBase
     [HttpPost("approve/{documentId}")]
     public async Task<IActionResult> ApproveDocument(Guid documentId)
     {
-        // 1. Audit kaydını bul
-        var record = await _dbContext.AuditRecords.FirstOrDefaultAsync(x => x.DocumentId == documentId);
-        if (record == null) return NotFound();
+        var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
-        // 2. Durumu güncelle (Eğer AuditRecord'da Status yoksa, BusinessRuleLog atabiliriz veya Status alanı ekleyebiliriz)
-        // Şimdilik sadece Event fırlatalım, en temizi.
-
-        // 3. Sisteme Haber Ver: "Bu belge onaylandı!"
-        await _publishEndpoint.Publish<IDocumentApproved>(new
+        // "Onaylandı" DEĞİL, "Onay İsteği" gönderiyoruz.
+        await _publishEndpoint.Publish<IDocumentApprovalRequested>(new
         {
             DocumentId = documentId,
-            ApprovedBy = "CurrentUser", // User.Identity.Name
-            ApprovedAt = DateTime.UtcNow
+            UserId = userId,
+            RequestedAt = DateTime.UtcNow
         });
 
-        return Ok(new { Message = "Belge onaylandı." });
+        return Ok(new { Message = "Onaylama işlemi başlatıldı." });
     }
 
     [HttpGet("logs")]

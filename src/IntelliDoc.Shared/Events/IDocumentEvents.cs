@@ -38,6 +38,21 @@ public interface IDocumentAudited
 public interface IDocumentApproved
 {
     Guid DocumentId { get; }
-    string ApprovedBy { get; }
+
+    // Bu UserId'dir. Webhook tablosunda arama yapmak için şart.
+    string UserId { get; }
+
+    // Onaylanma zamanı
     DateTime ApprovedAt { get; }
+
+    // KRİTİK: Onaylanmış temiz veriyi de gönderelim ki SAP'ye/Slack'e işlenebilsin.
+    // Genelde JSON string olarak taşınır.
+    string FinalJsonData { get; }
+}
+
+public interface IDocumentApprovalRequested
+{
+    Guid DocumentId { get; }
+    string UserId { get; }
+    DateTime RequestedAt { get; }
 }

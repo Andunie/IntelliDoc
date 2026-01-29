@@ -18,6 +18,6 @@ public enum DocumentStatus
 {
     Uploaded,           // Yüklendi, bekliyor
     Processing,         // AI işliyor
-    Completed,          // Başarıyla bitti
+    Approved,          // Başarıyla bitti
     Failed              // Hata aldı
 }

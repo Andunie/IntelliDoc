@@ -20,6 +20,7 @@
     <ProjectReference Include="..\Modules\IntelliDoc.Modules.Intake\IntelliDoc.Modules.Intake.csproj" />
     <ProjectReference Include="..\Modules\IntelliDoc.Modules.Extraction\IntelliDoc.Modules.Extraction.csproj" />
     <ProjectReference Include="..\Modules\IntelliDoc.Modules.Audit\IntelliDoc.Modules.Audit.csproj" />
+    <ProjectReference Include="..\Modules\IntelliDoc.Modules.Integration\IntelliDoc.Modules.Integration.csproj" />
     <ProjectReference Include="..\Modules\IntelliDoc.Modules.Search\IntelliDoc.Modules.Search.csproj" />
     <ProjectReference Include="..\Modules\IntelliDoc.Modules.Identity\IntelliDoc.Modules.Identity.csproj" />
   </ItemGroup>
