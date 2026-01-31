@@ -10,7 +10,6 @@ using IntelliDoc.Modules.Search;
 using IntelliDoc.Modules.Search.Endpoints;
 using IntelliDoc.Shared.Extensions;
 using Microsoft.OpenApi.Models;
-using Microsoft.AspNetCore.Mvc;
 using IntelliDoc.Modules.Integration.Endpoints;
 using IntelliDoc.Modules.Integration;
 

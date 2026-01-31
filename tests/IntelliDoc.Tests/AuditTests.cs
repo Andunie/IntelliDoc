@@ -29,7 +29,7 @@ public class AuditTests
             extracted_data = new
             {
                 DocumentType = "Fatura",
-                Entities = new { Amount = 15000 }
+                Fields = new { Amount = 15000 }
             }
         });
 

@@ -14,6 +14,7 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="9.0.11" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
     <PackageReference Include="Moq" Version="4.20.72" />
+    <PackageReference Include="NetArchTest.Rules" Version="1.3.2" />
     <PackageReference Include="xunit" Version="2.9.2" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.8.2" />
   </ItemGroup>
@@ -25,6 +26,8 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\Modules\IntelliDoc.Modules.Audit\IntelliDoc.Modules.Audit.csproj" />
     <ProjectReference Include="..\..\src\IntelliDoc.Shared\IntelliDoc.Shared.csproj" />
+    <ProjectReference Include="..\..\src\Modules\IntelliDoc.Modules.Extraction\IntelliDoc.Modules.Extraction.csproj" />
+    <ProjectReference Include="..\..\src\Modules\IntelliDoc.Modules.Intake\IntelliDoc.Modules.Intake.csproj" />
   </ItemGroup>
 
 </Project>
